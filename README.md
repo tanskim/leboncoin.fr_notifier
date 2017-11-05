@@ -1,2 +1,10 @@
-# leboncoin.fr_notifier
-Créer des alertes personnalisées pour le site leboncoin.fr
+# leboncoin.fr notifier
+*scrapper for the website leboncoin.fr*
+Filtrer les annonces intéressantes et les recevoir dans sa boite mail.
+
+## Revenez plus tard, actuellement en cours de développement
+
+
+
+
+
