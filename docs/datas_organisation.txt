@@ -1,4 +1,4 @@
-/// FORMAT DE LIEN :
+/// FORMATS DE LIEN :
 
 * toute la france dans une catégorie 
 https://www.leboncoin.fr/%CATEGORIE%/offres/?th=1
@@ -14,3 +14,21 @@ https://www.leboncoin.fr/%CATEGORIE%/offres/%REGIONS%/bonnes_affaires/?th=1
 
 * recherche dans un périmetre autour de la postion
 https://www.leboncoin.fr/%CATEGORIE%/offres/%REGIONS%/?th=1&w=4&latitude=46.75463&longitude=4.84513&radius=30000
+
+* reccherche dans un groupe de catégorie, entouré de '_'
+https://www.leboncoin.fr/_%MAINCATEGORY%_/offres/?th=1
+
+/// EXTRACTION ATTRIBUES DE recherche
+
+* input type=text
+--- name
+--- placeholder, intitulé du champ
+
+* input type=checkbox
+--- name
+--- value
+--- parent_element.text, intitulé de la case à cocher
+
+* select
+--- name
+--- child.text 
