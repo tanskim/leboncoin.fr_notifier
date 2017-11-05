@@ -1,2 +1,2 @@
 # leboncoin.fr_notifier
-Créer des alertes personnalisés pour le site leboncoin.fr
+Créer des alertes personnalisées pour le site leboncoin.fr

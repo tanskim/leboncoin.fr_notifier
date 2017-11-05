@@ -3,7 +3,8 @@
 import urllib.request
 import http.client
 from lxml import etree
-from pprint import pprint
+import pprint
+from time import sleep
 
 
 def strip_all(text):
@@ -27,7 +28,56 @@ def strip_all(text):
     return text
 
 
-def leboncoin_get_regions():
+def get_form_struct_by_category(category_name='all'):
+    from_struct_reslt = {}
+
+    category_name = 'voitures'
+    category_name = get_categories() if category_name == 'all' else category_name
+
+
+def get_car_brands_list():
+    brands_reslt = []
+    req = urllib.request.urlopen('https://www.leboncoin.fr/voitures/offres/')
+    tree = etree.fromstring(req.read(), parser=etree.HTMLParser())
+    root = tree.xpath('//*[@id="brand_select"]/optgroup')
+
+    if root == [] or len(root) != 2:
+        return brands_reslt
+
+    root_common_brands = root[0].getchildren()
+    root_other_brands = root[1].getchildren()
+
+    for elem in root_common_brands:
+        brands_reslt += [elem.attrib['value'].replace(' ', '_')]
+    for elem in root_other_brands:
+        brands_reslt += [elem.attrib['value'].replace(' ', '_')]
+
+    return brands_reslt
+
+
+def get_car_models_list(lst_brands='all'):
+    models_reslt = {}
+    url = 'https://www.leboncoin.fr/beta/ajax/brand_model_list.html?brand={}'
+
+    lst_brands = get_car_brands_list() if lst_brands == 'all' else lst_brands
+
+    n, t = 1, len(lst_brands)
+    for brand in lst_brands:
+        print("fetching model of '{}' #{}/{}".format(brand, n, t))
+        req = urllib.request.urlopen(url.format(brand))
+        tree = etree.fromstring(req.read(), parser=etree.HTMLParser())
+        root = tree.xpath('/html/body/option')
+
+        for elem in root:
+            if brand in models_reslt:
+                models_reslt[brand] += [elem.text]
+            else:
+                models_reslt[brand] = [elem.text]
+        n += 1
+    return models_reslt
+
+
+def get_regions():
     regions_reslt = []
     req = urllib.request.urlopen(
         'https://www.leboncoin.fr/')
@@ -43,10 +93,10 @@ def leboncoin_get_regions():
     return regions_reslt
 
 
-def leboncoin_check_categories_link(dict_categories=None):
+def check_categories_link(dict_categories=None):
 
     if dict_categories == None:
-        dict_categories = leboncoin_get_categories()
+        dict_categories = get_categories()
 
     dict_reslt = {}
     url = "/{}/offres/?th=1"
@@ -65,7 +115,7 @@ def leboncoin_check_categories_link(dict_categories=None):
     return dict_reslt
 
 
-def leboncoin_get_categories(url='https://www.leboncoin.fr/annonces/offres/ile_de_france/'):
+def get_categories(url='https://www.leboncoin.fr/annonces/offres/ile_de_france/'):
     categories_rslt = {}
     req = urllib.request.urlopen(
         'https://www.leboncoin.fr/annonces/offres/ile_de_france/')
@@ -86,8 +136,13 @@ def leboncoin_get_categories(url='https://www.leboncoin.fr/annonces/offres/ile_d
     return categories_rslt
 
 
-#lbcdict = leboncoin_get_categories()
+#f = open('car_models_list_pp.tmp', 'w')
+#pp = pprint.PrettyPrinter(stream=f)
+# pp.pprint(get_car_models_list())
+# f.close()
+
+# lbcdict = get_categories()
 # pprint(lbcdict)
 # print("Get categories fail" if lbcdict == {} else "Get categoires OK")
-pprint(leboncoin_check_categories_link())
-# pprint(leboncoin_get_regions())
+
+pprint.pprint(get_categories())
